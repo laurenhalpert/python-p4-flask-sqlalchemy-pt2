@@ -1,8 +1,27 @@
+# server/app.py
+
 #!/usr/bin/env python3
 
-from random import choice as rc
+from flask import Flask, make_response
+from flask_migrate import Migrate
 
-from faker import Faker
+from models import db
 
-from app import app
-from models import db, Owner, Pet
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+migrate = Migrate(app, db)
+
+db.init_app(app)
+
+@app.route('/')
+def index():
+    response = make_response(
+        '<h1>Welcome to the pet/owner directory!</h1>',
+        200
+    )
+    return response
+
+if __name__ == '__main__':
+    app.run(port=5555, debug=True)
